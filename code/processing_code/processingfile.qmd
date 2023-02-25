@@ -191,12 +191,18 @@ rawdata <- rename(rawdata, age = AGE, sex = SEX, race = RACENEW, ethnicity = HIS
 names(rawdata)
 ```
 
+### Converting some variables to characters
+```{r}
+rawdata <- rawdata %>% 
+     mutate_at(c(8:30), as.character)
+```
 
+### Creating a copy of rawdata
 ```{r}
 processeddata <- rawdata
 ```
 
-
+### saving the processed data
 ```{r}
 save_data_location <- here::here("data","processed_data","processeddata.rds")
 saveRDS(processeddata, file = save_data_location)

@@ -1,0 +1,2 @@
+"0","save_data_location <- here::here(""data"",""processed_data"",""processeddata.rds"")"
+"0","saveRDS(processeddata, file = save_data_location)"

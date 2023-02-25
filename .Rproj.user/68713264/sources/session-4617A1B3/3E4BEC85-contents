@@ -1,0 +1,211 @@
+---
+title: "Data Cleaning"
+author: "Chris Okitondo & Irene Cavros"
+date: "2023-02-20"
+output: html_document
+---
+
+
+# Setup
+
+Load needed packages. make sure they are installed.
+
+```{r, warning=FALSE, message=FALSE}
+library(readxl) #for loading Excel files
+library(writexl) #for writing Excel files
+library(haven) # for loading SPSS file
+library(dplyr) #for data processing/cleaning
+library(tidyr) #for data processing/cleaning
+library(skimr) #for nice visualization of data 
+library(here) #to set paths
+library(tidyverse)
+```
+
+
+# Data loading
+```{r}
+data_location <- here::here("data","raw_data","nhis_00015.sav")
+rawdata <- haven:: read_sav(data_location)
+```
+
+
+# Check data
+
+We are checking the data using several ways of looking at the data
+
+```{r}
+dplyr::glimpse(rawdata)
+summary(rawdata)
+head(rawdata)
+skimr::skim(rawdata)
+```
+
+
+### Observations for each year: 2012-2021
+```{r}
+table(rawdata$YEAR)
+```
+
+
+
+
+
+# Variables for Analysis
+
+Demographics: age, sex, race, ethnicity, veteran status
+Socio-economic status: education level, total combined family income, employment status, paid sick leave as part of job benefits, ratio of family income to poverty threshold
+General health: perceived health status, categorical BMI
+Conditions: ever told had asthma, ever told had cancer, ever told had coronary heart disease
+Health behaviors: alcohol drinking status, cigarette smoking status
+Access to care: has usual place for medical care, medical care delayed due to cost (past 12 months)
+Health insurance: health insurance coverage status
+Mental health: anxiety level, depression level
+Flu vaccine: Had any flu vaccine, past 12 months.
+
+
+
+# Cleaning varibles to create appropriate levels and also exclusing missing or unknown values
+```{r}
+# Age
+rawdata$AGE[rawdata$AGE == 997 | rawdata$AGE == 998 | rawdata$AGE == 999] <- NA
+
+# Sex: 1 for Male and 2 for female, 7 or 9 for unknown
+rawdata$SEX[rawdata$SEX == 7 |  rawdata$SEX == 9] <- NA
+
+
+# While:1, Black:2, American Indiana/Alaska Native:3, Asian: 4
+rawdata$RACENEW[rawdata$RACENEW == 100] <- 1
+rawdata$RACENEW[rawdata$RACENEW == 200] <- 2
+rawdata$RACENEW[rawdata$RACENEW == 300] <- 3
+rawdata$RACENEW[rawdata$RACENEW == 400] <- 4
+rawdata$RACENEW[rawdata$RACENEW > 400] <- NA
+
+# Hispanic: 1 for no, 2 for yes.
+rawdata$HISPYN[rawdata$HISPYN == 7 | rawdata$HISPYN == 8 | rawdata$HISPYN == 9] <- NA
+
+# Veteran status: 1 for no. 2 for yes
+rawdata$ARMFEV[rawdata$ARMFEV==10|rawdata$ARMFEV == 11 |rawdata$ARMFEV == 12 ] <- 1
+rawdata$ARMFEV[rawdata$ARMFEV == 20]  <- 2
+rawdata$ARMFEV[rawdata$ARMFEV==0|rawdata$ARMFEV==97|rawdata$ARMFEV ==98|rawdata$ARMFEV == 99 ]<-NA
+
+
+# EDUCATION: 1 for less than HS, 2 for HS, 3 for Some college, 4 for bachelor, 5 for graduate degree
+rawdata$EDUC[rawdata$EDUC >= 102 & rawdata$EDUC <= 116] <- 1
+rawdata$EDUC[rawdata$EDUC >= 200 & rawdata$EDUC <= 202] <- 2
+rawdata$EDUC[rawdata$EDUC >= 300 & rawdata$EDUC <= 303] <- 3
+rawdata$EDUC[rawdata$EDUC == 400] <- 4
+rawdata$EDUC[rawdata$EDUC >= 500 & rawdata$EDUC <= 505] <- 5
+rawdata$EDUC[rawdata$EDUC > 505] <- NA
+
+
+# EMPLOYMENT STATUS: 1 for not employed, 2 for employed, and 3 for retired
+rawdata$EMPSTAT[rawdata$EMPSTAT >= 100 &  rawdata$EMPSTAT <=120] <- 1
+rawdata$EMPSTAT[rawdata$EMPSTAT == 200] <- 2
+rawdata$EMPSTAT[rawdata$EMPSTAT == 220] <- 3
+
+# PAID Sick: 1 for no, 2 for yes
+
+
+# INCOME: 0 - 49,999: 1, 50,000-99,999: 2, AND +100k: 3
+rawdata$INCFAM07ON[rawdata$INCFAM07ON >= 11 &  rawdata$INCFAM07ON <= 12] <- 1
+rawdata$INCFAM07ON[rawdata$INCFAM07ON >= 22 &  rawdata$INCFAM07ON <= 23] <- 2
+rawdata$INCFAM07ON[rawdata$INCFAM07ON == 24] <- 3
+rawdata$INCFAM07ON[rawdata$INCFAM07ON > 24] <- NA
+
+# HEALTH STATUS: 1 Excellent, 2: Very good, 3: Good, 4: Fair, 5: Poor
+rawdata$HEALTH [rawdata$HEALTH  > 5] <- NA
+
+# BMI CAT: 1 for BMI < 18.5 (Underweight), 2 for 18.5 - 25 (Normalt), 3 for 25 - 30 (Overweight), 4 for >30 (Obese)
+rawdata$BMICAT [rawdata$BMICAT  == 0 | rawdata$BMICAT  == 9] <- NA
+
+# USUAL PLACE FOR MEDICAL CARE: 1 for no, 2 for yes
+rawdata$USUALPL[rawdata$USUALPL == 1] <- 1
+rawdata$USUALPL[rawdata$USUALPL == 2 &  rawdata$USUALPL == 3] <- 2
+rawdata$USUALPL[rawdata$USUALPL==0 | rawdata$USUALPL==7| rawdata$USUALPL==8| rawdata$USUALPL==9] <- NA
+
+# Medical care delayed due to cost: 1 for no, 2 for yes
+rawdata$USUALPL[rawdata$DELAYCOST ==0 | rawdata$DELAYCOST ==7| rawdata$DELAYCOST ==8| rawdata$USUALPL==9] <- NA
+
+# Health insurance coverage: 1 for no, 2 for yes
+rawdata$HINOTCOVE[rawdata$HINOTCOVE == 2] <- 3
+rawdata$HINOTCOVE[rawdata$HINOTCOVE == 1] <- 2
+rawdata$HINOTCOVE[rawdata$HINOTCOVE == 3] <- 1
+rawdata$HINOTCOVE[rawdata$HINOTCOVE == 9] <- NA
+
+# Had flu vaccine, past 12 months
+rawdata$VACFLU12M [rawdata$VACFLU12M  == 0|rawdata$VACFLU12M  == 3 |rawdata$VACFLU12M ==7|rawdata$VACFLU12M ==8|rawdata$VACFLU12M ==9] <- NA
+
+# Had covid, according to test
+rawdata$CVDTESTRSLT [rawdata$CVDTESTRSLT  == 0|rawdata$CVDTESTRSLT  == 3 |rawdata$CVDTESTRSLT ==7|rawdata$CVDTESTRSLT ==8|rawdata$CVDTESTRSLT ==9] <- NA
+
+# Ever told has Asthma: ASTHMAEV: 1 for no, 2 for yes
+rawdata$ASTHMAEV[rawdata$ASTHMAEV == 0|rawdata$ASTHMAEV==7|rawdata$ASTHMAEV==9] <- NA
+
+# Ever told has Cancer: CANCEREV: 1 for no, 2 for yes
+rawdata$CANCEREV[rawdata$CANCEREV == 0|rawdata$CANCEREV==7|rawdata$CANCEREV==9] <- NA
+
+
+# Ever told has CHD: CHEARTDIEV 1 for no, 2 for yes
+rawdata$CHEARTDIEV[rawdata$CHEARTDIEV==0|rawdata$CHEARTDIEV==7|rawdata$CHEARTDIEV==9] <- NA
+
+
+# ALCSTAT1: Alcohol drinking: 1 for no drinker, 2 for former drinker, 3 for current drinker
+rawdata$ALCSTAT1 [rawdata$ALCSTAT1 ==0|rawdata$ALCSTAT1 ==9] <- NA
+
+
+# Smoking status: 1 for no smoker, 2 for former smoker, 3 for current smoker
+rawdata$SMOKESTATUS2[rawdata$SMOKESTATUS2 == 10|rawdata$SMOKESTATUS2  == 11|rawdata$SMOKESTATUS2==12] <-3
+rawdata$SMOKESTATUS2 [rawdata$SMOKESTATUS2 == 20 ] <- 2
+rawdata$SMOKESTATUS2 [rawdata$SMOKESTATUS2 == 30 ] <- 1
+rawdata$SMOKESTATUS2 [rawdata$SMOKESTATUS2 > 30 ] <- NA
+
+# Worry, nervous, or anxious frequency: WORFREQ. 1 Daily, 2 weekly, 3 Monthly, 4 a few times a year, 5 Never
+rawdata$WORFREQ [rawdata$WORFREQ ==0|rawdata$WORFREQ ==7|rawdata$WORFREQ ==8
+                |rawdata$WORFREQ ==9] <- NA
+
+# Depression frequency: DEPFREQ. 1 Daily, 2 weekly, 3 Monthly, 4 a few times a year, 5 Never
+rawdata$DEPFREQ[rawdata$DEPFREQ==0|rawdata$DEPFREQ==7|rawdata$DEPFREQ==8|rawdata$DEPFREQ==9] <- NA
+```
+
+
+# Viewing data
+```{r}
+View(rawdata)
+```
+
+
+# Removing NAs values: We will decide how to proceed.
+```{r}
+#rawdata <- na.omit(rawdata)
+```
+
+
+# Rename some variables
+```{r}
+rawdata <- rename(rawdata, age = AGE, sex = SEX, race = RACENEW, ethnicity = HISPYN, veteran_status = ARMFEV, education = EDUC, employment_status = EMPSTAT, paidsick = PAIDSICK, fam_income = INCFAM07ON, health_status = HEALTH, bmi = BMICAT, medical_care_access = USUALPL, medical_care_delayed_cost = DELAYCOST, health_ins_status = HINOTCOVE, asthma = ASTHMAEV, cancer = CANCEREV, chd = CHEARTDIEV, alcohol_status = ALCSTAT1, smoking_status = SMOKESTATUS2, worriedness	= WORFREQ, depression = DEPFREQ, flu_vaccine = VACFLU12M, covid = CVDTESTRSLT)
+```
+
+
+### Check new variable names
+```{r}
+names(rawdata)
+```
+
+### Converting some variables to characters
+```{r}
+rawdata <- rawdata %>% 
+     mutate_at(c(8:30), as.character)
+```
+
+### Creating a copy of rawdata
+```{r}
+processeddata <- rawdata
+```
+
+### saving the processed data
+```{r}
+save_data_location <- here::here("data","processed_data","processeddata.rds")
+saveRDS(processeddata, file = save_data_location)
+```
+
+

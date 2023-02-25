@@ -13,11 +13,13 @@ As part of the exploratory analysis, we have produced plots, tables, and other s
 
 # Setup
 
-```{r}
+```{r, warning=FALSE, message=FALSE}
 #load needed packages. make sure they are installed.
 library(here) #for data loading/saving
 library(dplyr)
 library(ggplot2)
+library(haven)
+library("vtree") # For displaying nested subsets of a dataframe (variable trees)
 ```
 
 
@@ -33,8 +35,7 @@ mydata <- readRDS(data_location)
 
 ### Checking the years included in the data
 ```{r}
-table(processeddata$YEAR)
-View(mydata)
+table(mydata$YEAR)
 ```
 
 Because we only covid-19 information for 2020 and 2021. We will omit that variable for now
@@ -50,6 +51,11 @@ mydata2 <- na.omit(mydata1)
 ```
 
 
+### Print data
+```{r}
+print(mydata2)
+```
+
 # Data exploration through tables
 
 Showing a bit of code to produce and save a summary table.
@@ -57,10 +63,8 @@ Showing a bit of code to produce and save a summary table.
 This uses a bit of code trickery to get things into the shape of a data frame (for easier saving/showing in manuscript)
 
 ```{r}
-summary_df = data.frame(do.call(cbind, lapply(mydata2, summary)))
-print(summary_df)
-# another way of looking at the data
-dplyr::glimpse(mydata2)
+# looking at the data
+summary_df <- dplyr::glimpse(mydata2)
 # save to file
 summarytable_file = here("results", "summarytable.rds")
 saveRDS(summary_df, file = summarytable_file)
@@ -69,13 +73,16 @@ saveRDS(summary_df, file = summarytable_file)
 We are saving the results to the `results` folder. Depending on how many tables/figures you have, it might make sense to have separate folders for each. And/or you could have separate folders for exploratory tables/figures and for final tables/figures. Just choose a setup that makes sense for your project and works for you, and provide enough documentation that someone can understand what you are doing.
 
 
-# Data exploration through figures
-
-Box plots for the flu vaccine uptake and age
-
-
 ```{r}
-p1 <- ggplot(mydata2, aes(x=as.factor(flu_vaccine), y=age)) + 
+names(mydata2)
+```
+
+
+## Data exploration through figures
+
+###Box plots for the flu vaccine uptake and age
+```{r}
+p1 <- ggplot(mydata2, aes(x=flu_vaccine, y=age)) + 
   geom_boxplot(fill = "gray") +
   labs(title = "Distribution of Age per flu vaccine uptake", x = "Uptake of Flu Vaccine in the past 12 months", y = "Age") + scale_fill_discrete(labels=c('No', 'Yes')) + theme_classic()
 
@@ -88,33 +95,31 @@ figure_file = here("results","age & flu uptake distribution.png")
 ggsave(filename = figure_file, plot=p1) 
 ```
 
-
-Now weights.
-
+### Barplot for flu vaccine uptake: 1 for no and 2 for yes
 ```{r}
-p2 <- mydata %>% ggplot(aes(x=Weight)) + geom_histogram() 
-plot(p2)
-figure_file = here("results","weight_distribution.png")
-ggsave(filename = figure_file, plot=p2) 
+ggplot(mydata2, aes(flu_vaccine)) + 
+  geom_bar(width=0.7, fill="steelblue") + theme_classic()
 ```
 
-Now height as function of weight.
-
+### Flu vaccine by sex: 1 for no and 2 for yes
 ```{r}
-p3 <- mydata %>% ggplot(aes(x=Height, y=Weight)) + geom_point() + geom_smooth(method='lm')
-plot(p3)
-figure_file = here("results","height_weight.png")
-ggsave(filename = figure_file, plot=p3) 
+ggplot(mydata2, aes(fill= flu_vaccine, x = sex)) + 
+  geom_bar(position = "dodge") + theme_classic()
+ 
 ```
 
-Once more height as function of weight, stratified by sex.
 
+### Exploring soem variables tree
 ```{r}
-p4 <- mydata %>% ggplot(aes(x=Height, y=Weight, color = Sex)) + geom_point() + geom_smooth(method='lm')
-plot(p4)
-figure_file = here("results","height_weight_stratified.png")
-ggsave(filename = figure_file, plot=p4) 
+vtree(mydata2, "sex race flu_vaccine", )
+vtree(mydata2, "flu_vaccine sex race ", )
+vtree(mydata2, "flu_vaccine race ", )
 ```
+
+
+
+
+
 
 
 

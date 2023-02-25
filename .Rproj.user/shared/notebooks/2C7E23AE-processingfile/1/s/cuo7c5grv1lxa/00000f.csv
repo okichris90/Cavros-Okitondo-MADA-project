@@ -1,0 +1,2 @@
+"0","data_location <- here::here(""data"",""raw_data"",""nhis_00015.sav"")"
+"0","rawdata <- haven:: read_sav(data_location)"

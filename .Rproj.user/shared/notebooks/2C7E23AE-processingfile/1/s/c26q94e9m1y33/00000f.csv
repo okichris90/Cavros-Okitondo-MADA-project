@@ -1,0 +1,2 @@
+"0","rawdata <- rawdata %>% "
+"0","     mutate_at(c(8:30), as.character)"
