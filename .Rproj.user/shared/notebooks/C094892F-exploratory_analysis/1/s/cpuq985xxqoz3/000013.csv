@@ -1,0 +1,2 @@
+"0","ggplot(mydata2, aes(x= flu_vaccine, fill = sex)) + "
+"0","  geom_bar(position = ""dodge"") + scale_x_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + scale_fill_discrete(labels=c('Male', 'Female')) +  theme_classic()"

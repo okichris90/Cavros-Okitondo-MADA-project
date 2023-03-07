@@ -1,0 +1,2 @@
+"0","ggplot(mydata2, aes(flu_vaccine)) + "
+"0","  geom_bar(width=0.7, fill=""steelblue"") + scale_x_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + theme_classic()"

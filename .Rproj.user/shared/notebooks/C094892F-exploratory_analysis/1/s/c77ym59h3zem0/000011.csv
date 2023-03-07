@@ -1,0 +1,3 @@
+"0","ggplot(mydata2, aes(x = flu_vaccine, fill = health_ins_status)) +"
+"0","  geom_histogram(stat=""count"") + scale_x_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + scale_fill_discrete(labels=c('Does not have health insurance', 'Does have health insurance')) +"
+"0","  ggtitle(""Distribution of flu vaccine uptake by health insurance status"") + theme_classic()"

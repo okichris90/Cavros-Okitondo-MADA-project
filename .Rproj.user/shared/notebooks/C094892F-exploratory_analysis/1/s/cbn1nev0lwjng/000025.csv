@@ -1,5 +1,0 @@
-"0","p1 <- ggplot(mydata2, aes(x=flu_vaccine, y=age)) + "
-"0","  geom_boxplot(fill = ""gray"") +"
-"0","  labs(title = ""Distribution of Age per flu vaccine uptake"", x = ""Uptake of Flu Vaccine in the past 12 months"", y = ""Age"") + scale_fill_discrete(labels=c('No', 'Yes')) + theme_classic()"
-"0",""
-"0","p1"

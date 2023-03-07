@@ -84,7 +84,7 @@ names(mydata2)
 ```{r}
 p1 <- ggplot(mydata2, aes(x=flu_vaccine, y=age)) + 
   geom_boxplot(fill = "gray") +
-  labs(title = "Distribution of Age per flu vaccine uptake", x = "Uptake of Flu Vaccine in the past 12 months", y = "Age") + scale_fill_discrete(labels=c('No', 'Yes')) + theme_classic()
+  labs(title = "Distribution of Age per flu vaccine uptake", x = "Uptake of Flu Vaccine in the past 12 months", y = "Age") + scale_fill_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + theme_classic()
 
 p1
 ```
@@ -95,21 +95,40 @@ figure_file = here("results","age & flu uptake distribution.png")
 ggsave(filename = figure_file, plot=p1) 
 ```
 
+
+
+
 ### Barplot for flu vaccine uptake: 1 for no and 2 for yes
 ```{r}
 ggplot(mydata2, aes(flu_vaccine)) + 
-  geom_bar(width=0.7, fill="steelblue") + theme_classic()
+  geom_bar(width=0.7, fill="steelblue") + scale_x_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + theme_classic()
 ```
 
 ### Flu vaccine by sex: 1 for no and 2 for yes
 ```{r}
-ggplot(mydata2, aes(fill= flu_vaccine, x = sex)) + 
-  geom_bar(position = "dodge") + theme_classic()
+ggplot(mydata2, aes(x= flu_vaccine, fill = sex)) + 
+  geom_bar(position = "dodge") + scale_x_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + scale_fill_discrete(labels=c('Male', 'Female')) +  theme_classic()
  
 ```
 
 
-### Exploring soem variables tree
+
+### Flu vaccine by smoking: 1 for no smoker, 2 for former smoker, 3 for current smoker
+```{r, message=FALSE, warning=FALSE}
+ggplot(mydata2, aes(x = flu_vaccine, fill = smoking_status)) +
+  geom_histogram(stat="count") + scale_x_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + scale_fill_discrete(labels=c('No smoker', 'Former Smoker', 'Current smoker')) +
+  ggtitle("Distribution of flu vaccine uptake and smoking status") + theme_classic()
+```
+
+
+### Flu vaccine by health insurance status
+```{r, message=FALSE, warning=FALSE}
+ggplot(mydata2, aes(x = flu_vaccine, fill = health_ins_status)) +
+  geom_histogram(stat="count") + scale_x_discrete(labels=c('Did not take flu vaccine', 'Did take flu vaccine')) + scale_fill_discrete(labels=c('Does not have health insurance', 'Does have health insurance')) +
+  ggtitle("Distribution of flu vaccine uptake by health insurance status") + theme_classic()
+```
+
+### Exploring some variables tree
 ```{r}
 vtree(mydata2, "sex race flu_vaccine", )
 vtree(mydata2, "flu_vaccine sex race ", )
