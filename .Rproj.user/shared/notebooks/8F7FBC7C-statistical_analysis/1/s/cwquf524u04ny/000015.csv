@@ -1,0 +1,2 @@
+"0","log_fit_medical_care <- log_mod %>% fit(as.factor(flu_vaccine) ~ medical_care_access, data = mydata2)"
+"0","tidy(log_fit_medical_care)"

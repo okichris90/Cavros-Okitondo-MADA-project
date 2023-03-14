@@ -1,0 +1,8 @@
+"0","#load needed packages. make sure they are installed."
+"0","library(here) #for data loading/saving"
+"0","library(dplyr)"
+"0","library(skimr)"
+"0","library(ggplot2)"
+"0","library(tidyverse)"
+"0","library(tidymodels)"
+"0","library(performance)"

@@ -1,0 +1,2 @@
+"0","log_fit_education <- log_mod %>% fit(as.factor(flu_vaccine) ~ education, data = mydata2)"
+"0","tidy(log_fit_education)"

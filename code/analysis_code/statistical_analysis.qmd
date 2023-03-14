@@ -1,0 +1,185 @@
+---
+title: "Model Fitting"
+author: "Chris Okitondo and Irene Cavros"
+date: "03/13/2023"
+output: html_document
+---
+
+
+In this section, we will explore the following tasks:
+1. Loads cleaned data.
+2. Fits a linear model to the continuous outcome (Body temperature) using only the main predictor of interest.
+3. Fits another linear model to the continuous outcome using all (important) predictors of interest.
+4. Compares the model results for the model with just the main predictor and all predictors.
+5. Fits a logistic model to the categorical outcome (Nausea) using only the main predictor of interest.
+6. Fits another logistic model to the categorical outcome using all (important) predictors of interest.
+7. Compares the model results for the categorical model with just the main predictor and all predictors.
+
+### Setup
+```{r, warning=FALSE, message=FALSE}
+#load needed packages. make sure they are installed.
+library(here) #for data loading/saving
+library(dplyr)
+library(skimr)
+library(ggplot2)
+library(tidyverse)
+library(tidymodels)
+library(performance)
+```
+
+
+
+### Loading data
+```{r}
+#Path to data. 
+data_location <- here::here("data","processed_data","processeddata.rds")
+#load data
+mydata <- readRDS(data_location)
+```
+
+### View data
+```{r}
+View(mydata)
+```
+
+### Taking a quick look at the data
+```{r}
+glimpse(mydata)
+```
+
+
+### Creating a new dataframe without the covid variable 
+```{r}
+mydata1 <- mydata[,-30]
+```
+
+
+### Ignore the NA values in the dataset
+```{r}
+mydata2 <- na.omit(mydata1)
+```
+
+### Checking the variable names
+```{r}
+names(mydata2)
+```
+
+```{r}
+View(mydata2)
+```
+
+
+### This will convert scientific number into decimals
+```{r}
+options(digits=9)
+```
+
+### This sets up logistics regression
+```{r}
+log_mod <- logistic_reg() %>%
+  set_engine("glm")
+```
+
+Flu vaccine: 1 for did not take the flu vaccine and 2 for took the flu vaccine
+
+
+### Fitting logistic model: Using flu uptake as the outcome and age as predictor
+```{r}
+log_fit_age <- log_mod %>% fit(as.factor(flu_vaccine) ~ age, data = mydata2)
+tidy(log_fit_age)
+```
+
+### Fitting logistic model: Using flu uptake as the outcome and sex as predictor
+```{r}
+log_fit_sex <- log_mod %>% fit(as.factor(flu_vaccine) ~ sex, data = mydata2)
+tidy(log_fit_sex)
+```
+
+### Fitting logistic model: Using flu uptake as the outcome and race as predictor
+```{r}
+log_fit_race <- log_mod %>% fit(as.factor(flu_vaccine) ~ race, data = mydata2)
+tidy(log_fit_race)
+```
+This result shows that the black population and american indians are less likely to take the flu vaccine compared to whites. However, asians are more likely to take the flu vaccine compared to whites. 
+
+
+### Fitting logistic model: Using flu uptake as the outcome and education as predictor
+```{r}
+log_fit_education <- log_mod %>% fit(as.factor(flu_vaccine) ~ education, data = mydata2)
+tidy(log_fit_education)
+```
+This results show that the higher the degree someone has, the more likely they are to take the flu vaccine.
+
+
+### Fitting logistic model: Using flu uptake as outcome and family income as predictor
+```{r}
+log_fit_fam_income <- log_mod %>% fit(as.factor(flu_vaccine) ~ fam_income, data = mydata2)
+tidy(log_fit_fam_income)
+```
+The results show that the higher the income, the greater the likehood for someone to take the flu vaccine
+
+
+### Fitting logistic model: Using flu uptake as outcome and health insurance status as predictor
+```{r}
+log_fit_health_ins <- log_mod %>% fit(as.factor(flu_vaccine) ~ health_ins_status, data = mydata2)
+tidy(log_fit_health_ins)
+```
+Those with insurance coverage are more likely to take the flu vaccine
+
+### Fitting logistic model: Using flu uptake as outcome and medical care access as predictor
+```{r}
+log_fit_medical_care <- log_mod %>% fit(as.factor(flu_vaccine) ~ medical_care_access, data = mydata2)
+tidy(log_fit_medical_care)
+```
+If they have at least one usual place to seek medical care, they are more likely to take the flu vaccine.
+
+```{r}
+names(mydata2)
+```
+
+
+### Fitting logistic model to the categorical outcome flu_vaccine using some demographics as predictors of interest 
+```{r}
+log_fit_dems <- log_mod %>% fit(as.factor(flu_vaccine) ~ age + sex + race + ethnicity + education + fam_income, data = mydata2)
+
+tidy(log_fit_dems)
+```
+
+```{r}
+names(mydata2)
+```
+
+
+### Fitting logistic model to the categorical outcome flu_vaccine using asthma, cancer, and chd as predictors of interest 
+```{r}
+log_fit_medical_cond <- log_mod %>% fit(as.factor(flu_vaccine) ~  asthma+ chd + cancer, data = mydata2)
+
+tidy(log_fit_medical_cond)
+```
+
+
+
+
+
+```{r}
+options(scipen = 999)
+```
+
+
+### Fitting logistic model to the categorical outcome flu_vaccine using smoking and alcohol status as predictors of interest 
+```{r}
+log_fit_health_behaviors <- log_mod %>% fit(as.factor(flu_vaccine) ~  smoking_status+ alcohol_status, data = mydata2)
+
+tidy(log_fit_health_behaviors)
+```
+This resuls show that former smokers and former drinkers are more likely to get the flu vaccine compared to the population who never smoked or drank.  The active smokers 
+are less likely to take the vaccine compared to those who do not drink. There was no statistical difference between the active drinkers and those who do not drink in terms of their vaccine uptake.
+
+### Fitting logistic model to the categorical outcome flu_vaccine using smoking and alcohol status as predictors of interest 
+```{r}
+log_fit_full <- log_mod %>% fit(as.factor(flu_vaccine) ~  age + sex + race + ethnicity + education + fam_income + asthma + cancer + chd + smoking_status+ alcohol_status, data = mydata2)
+
+tidy(log_fit_full)
+```
+The result show that those who graduated from high school did not statisfically differ from those who never graduated for their flu vaccine uptake. Also, current drinkers did not statiscally differ from those who never drank for their flu vaccine uptake. All other predictors were found statitiscally significant. 
+

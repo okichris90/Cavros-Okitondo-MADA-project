@@ -1,0 +1,649 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.2.313">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Chris Okitondo and Irene Cavros">
+<meta name="dcterms.date" content="2023-03-13">
+
+<title>Model Fitting</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+pre > code.sourceCode { white-space: pre; position: relative; }
+pre > code.sourceCode > span { display: inline-block; line-height: 1.25; }
+pre > code.sourceCode > span:empty { height: 1.2em; }
+.sourceCode { overflow: visible; }
+code.sourceCode > span { color: inherit; text-decoration: inherit; }
+div.sourceCode { margin: 1em 0; }
+pre.sourceCode { margin: 0; }
+@media screen {
+div.sourceCode { overflow: auto; }
+}
+@media print {
+pre > code.sourceCode { white-space: pre-wrap; }
+pre > code.sourceCode > span { text-indent: -5em; padding-left: 5em; }
+}
+pre.numberSource code
+  { counter-reset: source-line 0; }
+pre.numberSource code > span
+  { position: relative; left: -4em; counter-increment: source-line; }
+pre.numberSource code > span > a:first-child::before
+  { content: counter(source-line);
+    position: relative; left: -1em; text-align: right; vertical-align: baseline;
+    border: none; display: inline-block;
+    -webkit-touch-callout: none; -webkit-user-select: none;
+    -khtml-user-select: none; -moz-user-select: none;
+    -ms-user-select: none; user-select: none;
+    padding: 0 4px; width: 4em;
+    color: #aaaaaa;
+  }
+pre.numberSource { margin-left: 3em; border-left: 1px solid #aaaaaa;  padding-left: 4px; }
+div.sourceCode
+  {   }
+@media screen {
+pre > code.sourceCode > span > a:first-child::before { text-decoration: underline; }
+}
+code span.al { color: #ff0000; font-weight: bold; } /* Alert */
+code span.an { color: #60a0b0; font-weight: bold; font-style: italic; } /* Annotation */
+code span.at { color: #7d9029; } /* Attribute */
+code span.bn { color: #40a070; } /* BaseN */
+code span.bu { color: #008000; } /* BuiltIn */
+code span.cf { color: #007020; font-weight: bold; } /* ControlFlow */
+code span.ch { color: #4070a0; } /* Char */
+code span.cn { color: #880000; } /* Constant */
+code span.co { color: #60a0b0; font-style: italic; } /* Comment */
+code span.cv { color: #60a0b0; font-weight: bold; font-style: italic; } /* CommentVar */
+code span.do { color: #ba2121; font-style: italic; } /* Documentation */
+code span.dt { color: #902000; } /* DataType */
+code span.dv { color: #40a070; } /* DecVal */
+code span.er { color: #ff0000; font-weight: bold; } /* Error */
+code span.ex { } /* Extension */
+code span.fl { color: #40a070; } /* Float */
+code span.fu { color: #06287e; } /* Function */
+code span.im { color: #008000; font-weight: bold; } /* Import */
+code span.in { color: #60a0b0; font-weight: bold; font-style: italic; } /* Information */
+code span.kw { color: #007020; font-weight: bold; } /* Keyword */
+code span.op { color: #666666; } /* Operator */
+code span.ot { color: #007020; } /* Other */
+code span.pp { color: #bc7a00; } /* Preprocessor */
+code span.sc { color: #4070a0; } /* SpecialChar */
+code span.ss { color: #bb6688; } /* SpecialString */
+code span.st { color: #4070a0; } /* String */
+code span.va { color: #19177c; } /* Variable */
+code span.vs { color: #4070a0; } /* VerbatimString */
+code span.wa { color: #60a0b0; font-weight: bold; font-style: italic; } /* Warning */
+</style>
+
+
+<script src="statistical_analysis_files/libs/clipboard/clipboard.min.js"></script>
+<script src="statistical_analysis_files/libs/quarto-html/quarto.js"></script>
+<script src="statistical_analysis_files/libs/quarto-html/popper.min.js"></script>
+<script src="statistical_analysis_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="statistical_analysis_files/libs/quarto-html/anchor.min.js"></script>
+<link href="statistical_analysis_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="statistical_analysis_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="statistical_analysis_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="statistical_analysis_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="statistical_analysis_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Model Fitting</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Chris Okitondo and Irene Cavros </p>
+          </div>
+  </div>
+    
+    <div>
+    <div class="quarto-title-meta-heading">Published</div>
+    <div class="quarto-title-meta-contents">
+      <p class="date">March 13, 2023</p>
+    </div>
+  </div>
+  
+    
+  </div>
+  
+
+</header>
+
+<p>In this section, we will explore the following tasks: 1. Loads cleaned data. 2. Fits a linear model to the continuous outcome (Body temperature) using only the main predictor of interest. 3. Fits another linear model to the continuous outcome using all (important) predictors of interest. 4. Compares the model results for the model with just the main predictor and all predictors. 5. Fits a logistic model to the categorical outcome (Nausea) using only the main predictor of interest. 6. Fits another logistic model to the categorical outcome using all (important) predictors of interest. 7. Compares the model results for the categorical model with just the main predictor and all predictors.</p>
+<section id="setup" class="level3">
+<h3 class="anchored" data-anchor-id="setup">Setup</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="co">#load needed packages. make sure they are installed.</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(here) <span class="co">#for data loading/saving</span></span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(skimr)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidymodels)</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(performance)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="loading-data" class="level3">
+<h3 class="anchored" data-anchor-id="loading-data">Loading data</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co">#Path to data. </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>data_location <span class="ot">&lt;-</span> here<span class="sc">::</span><span class="fu">here</span>(<span class="st">"data"</span>,<span class="st">"processed_data"</span>,<span class="st">"processeddata.rds"</span>)</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="co">#load data</span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>mydata <span class="ot">&lt;-</span> <span class="fu">readRDS</span>(data_location)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="view-data" class="level3">
+<h3 class="anchored" data-anchor-id="view-data">View data</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="taking-a-quick-look-at-the-data" class="level3">
+<h3 class="anchored" data-anchor-id="taking-a-quick-look-at-the-data">Taking a quick look at the data</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="fu">glimpse</span>(mydata)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Rows: 792,916
+Columns: 30
+$ YEAR                      &lt;dbl&gt; 2012, 2012, 2012, 2012, 2012, 2012, 2012, 20…
+$ SERIAL                    &lt;dbl&gt; 1, 1, 2, 3, 5, 5, 6, 6, 7, 8, 8, 8, 8, 9, 10…
+$ STRATA                    &lt;dbl&gt; 6109, 6109, 6167, 6042, 6117, 6117, 6035, 60…
+$ PSU                       &lt;dbl&gt; 1, 1, 2, 2, 2, 2, 1, 1, 1, 1, 1, 1, 1, 2, 2,…
+$ NHISHID                   &lt;chr&gt; "00002012000001", "00002012000001", "0000201…
+$ NHISPID                   &lt;chr&gt; "0020120000010101", "0020120000010102", "002…
+$ age                       &lt;dbl&gt; 45, 44, 79, 64, 45, 47, 22, 25, 64, 55, 46, …
+$ sex                       &lt;chr&gt; "2", "1", "2", "2", "2", "1", "1", "2", "2",…
+$ race                      &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1", "1",…
+$ ethnicity                 &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1", "1",…
+$ veteran_status            &lt;chr&gt; "1", "1", "1", "1", "1", "1", "1", "1", "1",…
+$ education                 &lt;chr&gt; "3", "1", "2", "5", "3", "3", "3", "3", "4",…
+$ employment_status         &lt;chr&gt; "3", "1", "3", "3", "3", "1", "2", "1", "1",…
+$ paidsick                  &lt;chr&gt; "0", "1", "0", "2", "2", "0", "0", "1", "2",…
+$ fam_income                &lt;chr&gt; "1", "1", "1", "2", "2", "2", "2", "2", "1",…
+$ POVERTY                   &lt;chr&gt; "14", "14", "22", "37", "37", "37", "34", "3…
+$ health_status             &lt;chr&gt; "5", "1", "4", "2", "4", "2", "3", "3", "3",…
+$ bmi                       &lt;chr&gt; NA, "4", NA, "4", "3", NA, NA, "2", "4", NA,…
+$ medical_care_access       &lt;chr&gt; NA, "1", NA, "2", "2", NA, NA, "2", "2", NA,…
+$ medical_care_delayed_cost &lt;chr&gt; "1", "2", "1", "1", "1", "1", "2", "1", "1",…
+$ health_ins_status         &lt;chr&gt; "2", "1", "2", "2", "2", "2", "2", "2", "2",…
+$ flu_vaccine               &lt;chr&gt; NA, "1", NA, "1", "1", NA, NA, "2", "2", NA,…
+$ asthma                    &lt;chr&gt; NA, "1", NA, "1", "2", NA, NA, "1", "2", NA,…
+$ cancer                    &lt;chr&gt; NA, "1", NA, "1", "1", NA, NA, "1", "1", NA,…
+$ chd                       &lt;chr&gt; NA, "1", NA, "1", "1", NA, NA, "1", "1", NA,…
+$ alcohol_status            &lt;chr&gt; NA, "3", NA, "2", "3", NA, NA, "3", "3", NA,…
+$ smoking_status            &lt;chr&gt; "0", "3", "0", "1", "1", "0", "0", "1", "2",…
+$ worriedness               &lt;chr&gt; NA, NA, NA, NA, "1", NA, NA, NA, "5", NA, NA…
+$ depression                &lt;chr&gt; NA, NA, NA, NA, "5", NA, NA, NA, "2", NA, NA…
+$ covid                     &lt;chr&gt; NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, NA, …</code></pre>
+</div>
+</div>
+</section>
+<section id="creating-a-new-dataframe-without-the-covid-variable" class="level3">
+<h3 class="anchored" data-anchor-id="creating-a-new-dataframe-without-the-covid-variable">Creating a new dataframe without the covid variable</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>mydata1 <span class="ot">&lt;-</span> mydata[,<span class="sc">-</span><span class="dv">30</span>]</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="ignore-the-na-values-in-the-dataset" class="level3">
+<h3 class="anchored" data-anchor-id="ignore-the-na-values-in-the-dataset">Ignore the NA values in the dataset</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>mydata2 <span class="ot">&lt;-</span> <span class="fu">na.omit</span>(mydata1)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="checking-the-variable-names" class="level3">
+<h3 class="anchored" data-anchor-id="checking-the-variable-names">Checking the variable names</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mydata2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "YEAR"                      "SERIAL"                   
+ [3] "STRATA"                    "PSU"                      
+ [5] "NHISHID"                   "NHISPID"                  
+ [7] "age"                       "sex"                      
+ [9] "race"                      "ethnicity"                
+[11] "veteran_status"            "education"                
+[13] "employment_status"         "paidsick"                 
+[15] "fam_income"                "POVERTY"                  
+[17] "health_status"             "bmi"                      
+[19] "medical_care_access"       "medical_care_delayed_cost"
+[21] "health_ins_status"         "flu_vaccine"              
+[23] "asthma"                    "cancer"                   
+[25] "chd"                       "alcohol_status"           
+[27] "smoking_status"            "worriedness"              
+[29] "depression"               </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb10"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a><span class="fu">View</span>(mydata2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="this-will-convert-scientific-number-into-decimals" class="level3">
+<h3 class="anchored" data-anchor-id="this-will-convert-scientific-number-into-decimals">This will convert scientific number into decimals</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">digits=</span><span class="dv">9</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="this-sets-up-logistics-regression" class="level3">
+<h3 class="anchored" data-anchor-id="this-sets-up-logistics-regression">This sets up logistics regression</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb12"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>log_mod <span class="ot">&lt;-</span> <span class="fu">logistic_reg</span>() <span class="sc">%&gt;%</span></span>
+<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">set_engine</span>(<span class="st">"glm"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>Flu vaccine: 1 for did not take the flu vaccine and 2 for took the flu vaccine</p>
+</section>
+<section id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-age-as-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-age-as-predictor">Fitting logistic model: Using flu uptake as the outcome and age as predictor</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>log_fit_age <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> age, <span class="at">data =</span> mydata2)</span>
+<span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_age)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 (Intercept)  -1.84    0.0183      -100.        0
+2 age           0.0337  0.000338      99.6       0</code></pre>
+</div>
+</div>
+</section>
+<section id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-sex-as-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-sex-as-predictor">Fitting logistic model: Using flu uptake as the outcome and sex as predictor</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>log_fit_sex <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> sex, <span class="at">data =</span> mydata2)</span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_sex)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)   -0.289   0.00844     -34.3 2.70e-257
+2 sex2           0.313   0.0114       27.3 1.09e-164</code></pre>
+</div>
+</div>
+</section>
+<section id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-race-as-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-race-as-predictor">Fitting logistic model: Using flu uptake as the outcome and race as predictor</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>log_fit_race <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> race, <span class="at">data =</span> mydata2)</span>
+<span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_race)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)  -0.0725   0.00632    -11.5  1.82e- 30
+2 race2        -0.383    0.0175     -21.9  6.69e-106
+3 race3        -0.165    0.0557      -2.97 2.99e-  3
+4 race4         0.0391   0.0245       1.60 1.11e-  1</code></pre>
+</div>
+</div>
+<p>This result shows that the black population and american indians are less likely to take the flu vaccine compared to whites. However, asians are more likely to take the flu vaccine compared to whites.</p>
+</section>
+<section id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-education-as-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-using-flu-uptake-as-the-outcome-and-education-as-predictor">Fitting logistic model: Using flu uptake as the outcome and education as predictor</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>log_fit_education <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> education, <span class="at">data =</span> mydata2)</span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_education)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)  -0.332     0.0168    -19.7  9.99e- 87
+2 education2    0.0347    0.0204      1.70 8.92e-  2
+3 education3    0.0964    0.0197      4.88 1.05e-  6
+4 education4    0.359     0.0210     17.2  5.90e- 66
+5 education5    0.792     0.0235     33.7  1.20e-249</code></pre>
+</div>
+</div>
+<p>This results show that the higher the degree someone has, the more likely they are to take the flu vaccine.</p>
+</section>
+<section id="fitting-logistic-model-using-flu-uptake-as-outcome-and-family-income-as-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-using-flu-uptake-as-outcome-and-family-income-as-predictor">Fitting logistic model: Using flu uptake as outcome and family income as predictor</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>log_fit_fam_income <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> fam_income, <span class="at">data =</span> mydata2)</span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_fam_income)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 3 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)   -0.272   0.00821     -33.1 8.79e-240
+2 fam_income2    0.171   0.0134       12.7 3.94e- 37
+3 fam_income3    0.446   0.0144       30.9 9.38e-210</code></pre>
+</div>
+</div>
+<p>The results show that the higher the income, the greater the likehood for someone to take the flu vaccine</p>
+</section>
+<section id="fitting-logistic-model-using-flu-uptake-as-outcome-and-health-insurance-status-as-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-using-flu-uptake-as-outcome-and-health-insurance-status-as-predictor">Fitting logistic model: Using flu uptake as outcome and health insurance status as predictor</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>log_fit_health_ins <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> health_ins_status, <span class="at">data =</span> mydata2)</span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_health_ins)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term               estimate std.error statistic p.value
+  &lt;chr&gt;                 &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 (Intercept)           -1.63    0.0234     -69.5       0
+2 health_ins_status2     1.65    0.0242      68.4       0</code></pre>
+</div>
+</div>
+<p>Those with insurance coverage are more likely to take the flu vaccine</p>
+</section>
+<section id="fitting-logistic-model-using-flu-uptake-as-outcome-and-medical-care-access-as-predictor" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-using-flu-uptake-as-outcome-and-medical-care-access-as-predictor">Fitting logistic model: Using flu uptake as outcome and medical care access as predictor</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>log_fit_medical_care <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> medical_care_access, <span class="at">data =</span> mydata2)</span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_medical_care)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 2 × 5
+  term                 estimate std.error statistic p.value
+  &lt;chr&gt;                   &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;   &lt;dbl&gt;
+1 (Intercept)             -1.45    0.0208     -69.7       0
+2 medical_care_access2     1.49    0.0217      68.5       0</code></pre>
+</div>
+</div>
+<p>If they have at least one usual place to seek medical care, they are more likely to take the flu vaccine.</p>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mydata2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "YEAR"                      "SERIAL"                   
+ [3] "STRATA"                    "PSU"                      
+ [5] "NHISHID"                   "NHISPID"                  
+ [7] "age"                       "sex"                      
+ [9] "race"                      "ethnicity"                
+[11] "veteran_status"            "education"                
+[13] "employment_status"         "paidsick"                 
+[15] "fam_income"                "POVERTY"                  
+[17] "health_status"             "bmi"                      
+[19] "medical_care_access"       "medical_care_delayed_cost"
+[21] "health_ins_status"         "flu_vaccine"              
+[23] "asthma"                    "cancer"                   
+[25] "chd"                       "alcohol_status"           
+[27] "smoking_status"            "worriedness"              
+[29] "depression"               </code></pre>
+</div>
+</div>
+</section>
+<section id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-some-demographics-as-predictors-of-interest" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-some-demographics-as-predictors-of-interest">Fitting logistic model to the categorical outcome flu_vaccine using some demographics as predictors of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb29"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>log_fit_dems <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span> age <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> ethnicity <span class="sc">+</span> education <span class="sc">+</span> fam_income, <span class="at">data =</span> mydata2)</span>
+<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_dems)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 13 × 5
+   term        estimate std.error statistic   p.value
+   &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 (Intercept)  -2.38    0.0302     -78.9   0        
+ 2 age           0.0349  0.000356    98.1   0        
+ 3 sex2          0.331   0.0122      27.2   4.15e-163
+ 4 race2        -0.256   0.0189     -13.6   5.27e- 42
+ 5 race3         0.201   0.0587       3.42  6.31e-  4
+ 6 race4         0.104   0.0262       3.98  6.78e-  5
+ 7 ethnicity2   -0.200   0.0195     -10.3   8.27e- 25
+ 8 education2    0.0104  0.0222       0.468 6.39e-  1
+ 9 education3    0.170   0.0220       7.75  8.89e- 15
+10 education4    0.399   0.0241      16.6   8.83e- 62
+11 education5    0.680   0.0269      25.2   1.31e-140
+12 fam_income2   0.137   0.0149       9.22  3.07e- 20
+13 fam_income3   0.343   0.0169      20.3   1.52e- 91</code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb31"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(mydata2)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code> [1] "YEAR"                      "SERIAL"                   
+ [3] "STRATA"                    "PSU"                      
+ [5] "NHISHID"                   "NHISPID"                  
+ [7] "age"                       "sex"                      
+ [9] "race"                      "ethnicity"                
+[11] "veteran_status"            "education"                
+[13] "employment_status"         "paidsick"                 
+[15] "fam_income"                "POVERTY"                  
+[17] "health_status"             "bmi"                      
+[19] "medical_care_access"       "medical_care_delayed_cost"
+[21] "health_ins_status"         "flu_vaccine"              
+[23] "asthma"                    "cancer"                   
+[25] "chd"                       "alcohol_status"           
+[27] "smoking_status"            "worriedness"              
+[29] "depression"               </code></pre>
+</div>
+</div>
+</section>
+<section id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-asthma-cancer-and-chd-as-predictors-of-interest" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-asthma-cancer-and-chd-as-predictors-of-interest">Fitting logistic model to the categorical outcome flu_vaccine using asthma, cancer, and chd as predictors of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb33"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>log_fit_medical_cond <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span>  asthma<span class="sc">+</span> chd <span class="sc">+</span> cancer, <span class="at">data =</span> mydata2)</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb33-3"><a href="#cb33-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_medical_cond)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 4 × 5
+  term        estimate std.error statistic   p.value
+  &lt;chr&gt;          &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)   -0.285   0.00657     -43.3 0        
+2 asthma2        0.229   0.0169       13.5 1.07e- 41
+3 chd2           0.852   0.0270       31.6 2.92e-219
+4 cancer2        0.835   0.0193       43.3 0        </code></pre>
+</div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb35"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu">options</span>(<span class="at">scipen =</span> <span class="dv">999</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+</section>
+<section id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-smoking-and-alcohol-status-as-predictors-of-interest" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-smoking-and-alcohol-status-as-predictors-of-interest">Fitting logistic model to the categorical outcome flu_vaccine using smoking and alcohol status as predictors of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb36"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>log_fit_health_behaviors <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span>  smoking_status<span class="sc">+</span> alcohol_status, <span class="at">data =</span> mydata2)</span>
+<span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_health_behaviors)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 5 × 5
+  term             estimate std.error statistic   p.value
+  &lt;chr&gt;               &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+1 (Intercept)     -0.152       0.0139  -11.0    6.06e- 28
+2 smoking_status2  0.309       0.0140   22.0    1.89e-107
+3 smoking_status3 -0.606       0.0171  -35.3    1.61e-273
+4 alcohol_status2  0.294       0.0204   14.4    5.27e- 47
+5 alcohol_status3  0.000360    0.0158    0.0227 9.82e-  1</code></pre>
+</div>
+</div>
+<p>This resuls show that former smokers and former drinkers are more likely to get the flu vaccine compared to the population who never smoked or drank. The active smokers are less likely to take the vaccine compared to those who do not drink. There was no statistical difference between the active drinkers and those who do not drink in terms of their vaccine uptake.</p>
+</section>
+<section id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-smoking-and-alcohol-status-as-predictors-of-interest-1" class="level3">
+<h3 class="anchored" data-anchor-id="fitting-logistic-model-to-the-categorical-outcome-flu_vaccine-using-smoking-and-alcohol-status-as-predictors-of-interest-1">Fitting logistic model to the categorical outcome flu_vaccine using smoking and alcohol status as predictors of interest</h3>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb38"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>log_fit_full <span class="ot">&lt;-</span> log_mod <span class="sc">%&gt;%</span> <span class="fu">fit</span>(<span class="fu">as.factor</span>(flu_vaccine) <span class="sc">~</span>  age <span class="sc">+</span> sex <span class="sc">+</span> race <span class="sc">+</span> ethnicity <span class="sc">+</span> education <span class="sc">+</span> fam_income <span class="sc">+</span> asthma <span class="sc">+</span> cancer <span class="sc">+</span> chd <span class="sc">+</span> smoking_status<span class="sc">+</span> alcohol_status, <span class="at">data =</span> mydata2)</span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a><span class="fu">tidy</span>(log_fit_full)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 5
+   term            estimate std.error statistic   p.value
+   &lt;chr&gt;              &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;     &lt;dbl&gt;
+ 1 (Intercept)     -2.21     0.0340     -64.9   0        
+ 2 age              0.0311   0.000389    80.0   0        
+ 3 sex2             0.325    0.0125      26.0   2.13e-149
+ 4 race2           -0.250    0.0191     -13.1   5.23e- 39
+ 5 race3            0.218    0.0591       3.69  2.22e-  4
+ 6 race4            0.124    0.0265       4.66  3.12e-  6
+ 7 ethnicity2      -0.215    0.0198     -10.9   1.19e- 27
+ 8 education2       0.00607  0.0226       0.269 7.88e-  1
+ 9 education3       0.140    0.0224       6.26  3.87e- 10
+10 education4       0.351    0.0247      14.2   1.10e- 45
+11 education5       0.623    0.0276      22.6   9.42e-113
+12 fam_income2      0.135    0.0151       8.94  3.87e- 19
+13 fam_income3      0.336    0.0172      19.5   1.53e- 84
+14 asthma2          0.335    0.0180      18.7   1.01e- 77
+15 cancer2          0.292    0.0208      14.1   6.46e- 45
+16 chd2             0.460    0.0286      16.1   2.31e- 58
+17 smoking_status2  0.0610   0.0154       3.96  7.61e-  5
+18 smoking_status3 -0.424    0.0186     -22.8   5.32e-115
+19 alcohol_status2  0.0731   0.0219       3.33  8.59e-  4
+20 alcohol_status3 -0.0124   0.0178      -0.693 4.88e-  1</code></pre>
+</div>
+</div>
+<p>The result show that those who graduated from high school did not statisfically differ from those who never graduated for their flu vaccine uptake. Also, current drinkers did not statiscally differ from those who never drank for their flu vaccine uptake. All other predictors were found statitiscally significant.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    let tooltip;
+    if (window.bootstrap) {
+      button.setAttribute("data-bs-toggle", "tooltip");
+      button.setAttribute("data-bs-placement", "left");
+      button.setAttribute("data-bs-title", "Copied!");
+      tooltip = new bootstrap.Tooltip(button, 
+        { trigger: "manual", 
+          customClass: "code-copy-button-tooltip",
+          offset: [0, -8]});
+      tooltip.show();    
+    }
+    setTimeout(function() {
+      if (tooltip) {
+        tooltip.hide();
+        button.removeAttribute("data-bs-title");
+        button.removeAttribute("data-bs-toggle");
+        button.removeAttribute("data-bs-placement");
+      }
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  const findCites = (el) => {
+    const parentEl = el.parentElement;
+    if (parentEl) {
+      const cites = parentEl.dataset.cites;
+      if (cites) {
+        return {
+          el,
+          cites: cites.split(' ')
+        };
+      } else {
+        return findCites(el.parentElement)
+      }
+    } else {
+      return undefined;
+    }
+  };
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const citeInfo = findCites(ref);
+    if (citeInfo) {
+      tippyHover(citeInfo.el, function() {
+        var popup = window.document.createElement('div');
+        citeInfo.cites.forEach(function(cite) {
+          var citeDiv = window.document.createElement('div');
+          citeDiv.classList.add('hanging-indent');
+          citeDiv.classList.add('csl-entry');
+          var biblioDiv = window.document.getElementById('ref-' + cite);
+          if (biblioDiv) {
+            citeDiv.innerHTML = biblioDiv.innerHTML;
+          }
+          popup.appendChild(citeDiv);
+        });
+        return popup.innerHTML;
+      });
+    }
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>

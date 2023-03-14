@@ -1,0 +1,3 @@
+"0","log_fit_full <- log_mod %>% fit(as.factor(flu_vaccine) ~  age + sex + race + ethnicity + education + fam_income + asthma + cancer + chd + smoking_status+ alcohol_status, data = mydata2)"
+"0",""
+"0","tidy(log_fit_full)"
